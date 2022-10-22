@@ -2252,6 +2252,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2261,7 +2272,9 @@ __webpack_require__.r(__webpack_exports__);
         id: '',
         name: '',
         email: '',
-        password: ''
+        password: '',
+        password_confirmation: '',
+        image: ''
       }
     };
   },
@@ -2295,7 +2308,11 @@ __webpack_require__.r(__webpack_exports__);
     createUser: function createUser() {
       var _this3 = this;
 
-      axios.post('/users', this.form).then(function () {
+      axios.post('/users', this.createFormData(), {
+        headers: {
+          'Content-Type': "multipart/form-data; charset=utf-8; boundary=" + Math.random().toString().substr(2)
+        }
+      }).then(function () {
         Fire.$emit('load_user');
         Toast.fire({
           icon: 'success',
@@ -2310,6 +2327,15 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
+    createFormData: function createFormData() {
+      var formData = new FormData();
+
+      for (var key in this.form) {
+        formData.append(key, this.form[key]);
+      }
+
+      return formData;
+    },
     edit: function edit(user) {
       this.resetForm();
       $('#user').modal('show');
@@ -2318,7 +2344,11 @@ __webpack_require__.r(__webpack_exports__);
     updateUser: function updateUser() {
       var _this4 = this;
 
-      axios.put('/users/' + this.form.id, this.form).then(function () {
+      axios.post('/users/' + this.form.id, this.createFormData(), {
+        headers: {
+          'Content-Type': "multipart/form-data; charset=utf-8; boundary=" + Math.random().toString().substr(2)
+        }
+      }).then(function () {
         Toast.fire({
           icon: 'success',
           title: 'User updated successfully'
@@ -2356,6 +2386,9 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
       });
+    },
+    imageUp: function imageUp() {
+      this.form.image = event.target.files[0];
     }
   },
   created: function created() {
@@ -2454,7 +2487,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.pagination[data-v-702ca2cd] {\n    margin-top: 30px;\n    float: right;\n}\n.validation_error[data-v-702ca2cd] {\n    border: 1px solid red !important;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.pagination[data-v-702ca2cd] {\r\n  margin-top: 30px;\r\n  float: right;\n}\n.validation_error[data-v-702ca2cd] {\r\n  border: 1px solid red !important;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -24606,12 +24639,14 @@ var render = function () {
           [
             _c("thead", [
               _c("tr", [
+                _c("th", [_vm._v("Image")]),
+                _vm._v(" "),
                 _c("th", [_vm._v("Name")]),
                 _vm._v(" "),
                 _c("th", [_vm._v("Email")]),
                 _vm._v(" "),
                 _c("th", { staticClass: "check" }, [
-                  _vm._v("Action\n                        "),
+                  _vm._v("Action\n            "),
                   _c(
                     "a",
                     {
@@ -24627,7 +24662,7 @@ var render = function () {
                     },
                     [
                       _c("i", { staticClass: "fa fa-plus-square" }, [
-                        _vm._v(" Add User\n                            "),
+                        _vm._v(" Add User\n              "),
                       ]),
                     ]
                   ),
@@ -24639,6 +24674,16 @@ var render = function () {
               "tbody",
               _vm._l(_vm.users.data, function (user) {
                 return _c("tr", { key: user.id }, [
+                  _c("td", [
+                    _c("img", {
+                      attrs: {
+                        width: "80",
+                        src: user.profile_pic,
+                        alt: user.name,
+                      },
+                    }),
+                  ]),
+                  _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(user.name))]),
                   _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(user.email))]),
@@ -24854,6 +24899,50 @@ var render = function () {
                                 _vm._v(_vm._s(_vm.errors.password[0])),
                               ])
                             : _vm._e(),
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.password_confirmation,
+                                expression: "form.password_confirmation",
+                              },
+                            ],
+                            staticClass: "input2 form-control",
+                            class: {
+                              "is-invalid": _vm.errors.password_confirmation,
+                            },
+                            attrs: {
+                              type: "password",
+                              name: "password",
+                              placeholder: "password",
+                              "data-validate": "Password is required",
+                            },
+                            domProps: { value: _vm.form.password_confirmation },
+                            on: {
+                              input: function ($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.form,
+                                  "password_confirmation",
+                                  $event.target.value
+                                )
+                              },
+                            },
+                          }),
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("input", {
+                            staticClass: "input2 form-control",
+                            attrs: { type: "file" },
+                            on: { change: _vm.imageUp },
+                          }),
                         ]),
                       ]),
                       _vm._v(" "),

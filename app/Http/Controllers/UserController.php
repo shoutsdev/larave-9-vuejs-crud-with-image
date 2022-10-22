@@ -24,8 +24,18 @@ class UserController extends Controller
         ]);
 
         DB::beginTransaction();
-        $request['password'] = bcrypt($request->password);
-        User::create($request->all());
+
+        $data = $request->all();
+
+        if ($request->image) {
+            $image = $request->image;
+            $image_new_name = time() . $image->getClientOriginalName();
+            $image->move('uploads/users', $image_new_name);
+            $data['image'] = 'uploads/users/' . $image_new_name;
+        }
+
+        $data['password'] = bcrypt($request->password);
+        User::create($data);
         DB::commit();
         return response()->json(['success' => 'User Created Successfully'], 201);
 
@@ -36,13 +46,25 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:8',
+            'email' => 'required|email'
         ]);
 
         $user = User::find($request->id);
-        $request['password'] = bcrypt($request->password);
-        $user->update($request->all());
+
+        $data = $request->all();
+
+        if ($request->image) {
+            $image = $request->image;
+            $image_new_name = time() . $image->getClientOriginalName();
+            $image->move('uploads/users', $image_new_name);
+            $data['image'] = 'uploads/users/' . $image_new_name;
+        }
+
+        if ($request->password) {
+            $data['password'] = bcrypt($request->password);
+        }
+
+        $user->update($data);
 
         return response()->json(['success' => 'User Updated Successfully'], 200);
     }
